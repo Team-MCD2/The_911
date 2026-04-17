@@ -1,9 +1,8 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Russo_One } from 'next/font/google';
 import Script from 'next/script';
 
-// Configure fonts
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const russoOne = Russo_One({ weight: "400", subsets: ['latin'], variable: '--font-russo' });
 
@@ -11,6 +10,14 @@ export const metadata: Metadata = {
   title: 'THE 911 | Guilty Sandwich',
   description: 'THE 911 - Le repaire des Guilty Sandwiches. Tellement bons que ça devrait être illégal. Découvrez notre menu de braquage.',
   keywords: 'restaurant, fast food, guilty sandwich, the 911, burger, smash burger, paris, livraison',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#0a0a0a',
 };
 
 export default function RootLayout({

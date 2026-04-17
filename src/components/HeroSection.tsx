@@ -3,9 +3,16 @@ import Link from 'next/link';
 export default function HeroSection() {
   return (
     <header className="hero" id="home">
-      <video className="video-bg" autoPlay loop muted playsInline>
-        {/* Placeholder video that looks like a fast food / burger reel */}
-        <source src="https://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4" />
+      <video
+        className="video-bg"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="/videos/hero-epithete.mp4" type="video/mp4" />
       </video>
       <div className="hero-overlay"></div>
 
@@ -31,9 +38,6 @@ export default function HeroSection() {
           <Link href="#menu" className="btn btn-primary">VOIR LE MENU</Link>
         </div>
       </div>
-      
-      {/* Separator US Fast Food style */}
-      <div className="us-fast-food-separator" style={{ position: 'absolute', bottom: 0 }}></div>
     </header>
   );
 }

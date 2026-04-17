@@ -35,11 +35,17 @@ export default function Home() {
     <main>
       <Navbar />
       <HeroSection />
+      <div className="section-separator with-emblem"></div>
       <BestSellersSection />
+      <div className="section-separator"></div>
       <PourquoiNousSection />
+      <div className="section-separator with-emblem"></div>
       <MenuSection />
+      <div className="section-separator"></div>
       <DeliverySection />
+      <div className="section-separator with-emblem"></div>
       <ReviewsSection />
+      <div className="section-separator"></div>
       <AmbianceSection />
       <Footer />
     </main>
