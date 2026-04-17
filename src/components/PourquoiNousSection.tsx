@@ -18,21 +18,50 @@ function TouchdownBlock() {
   const [loadError, setLoadError] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Intersection Observer : play >= 40%, pause sinon. Pas d'autoplay au load.
+  // Intersection Observer : démarre la lecture dès 10% visible, et en plus on
+  // précharge (`preload="auto"`) pour que la vidéo soit prête au moment où elle
+  // entre dans le viewport (pas d'attente de chargement). Fallback user gesture
+  // si la policy autoplay mobile bloque la première tentative.
   useEffect(() => {
     const wrapper = wrapperRef.current;
     const video = videoRef.current;
     if (!wrapper || !video) return;
 
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const attachGestureFallback = () => {
+      const onGesture = () => {
+        video.muted = true;
+        video.play().catch(() => {});
+        document.removeEventListener('touchstart', onGesture);
+        document.removeEventListener('click', onGesture);
+        document.removeEventListener('scroll', onGesture);
+      };
+      document.addEventListener('touchstart', onGesture, { once: true, passive: true });
+      document.addEventListener('click', onGesture, { once: true });
+      document.addEventListener('scroll', onGesture, { once: true, passive: true });
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
-          video.play().catch(() => setNeedsManualPlay(true));
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+          const p = video.play();
+          if (p !== undefined) {
+            p.catch(() => {
+              setNeedsManualPlay(true);
+              attachGestureFallback();
+            });
+          }
         } else if (!video.paused) {
           video.pause();
         }
       },
-      { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] }
+      { threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1] }
     );
 
     observer.observe(wrapper);
@@ -95,10 +124,13 @@ function TouchdownBlock() {
             className={`touchdown-media ${isPlaying ? 'is-playing' : ''}`}
             src={VIDEO_SRC}
             poster={VIDEO_POSTER}
+            autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
             onPlay={() => {
               setIsPlaying(true);
               setNeedsManualPlay(false);

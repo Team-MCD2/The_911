@@ -1,9 +1,69 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 
 export default function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Force la lecture immédiate sur mobile : Safari iOS / Chrome Android peuvent
+  // ignorer `autoplay` tant qu'on ne garantit pas muted + playsInline via JS,
+  // et/ou tant que la vidéo n'est pas suffisamment préchargée. On retente aussi
+  // au premier geste utilisateur si l'autoplay est bloqué par la policy.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    v.setAttribute('muted', '');
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+
+    let cancelled = false;
+
+    const attachGestureFallback = () => {
+      const onGesture = () => {
+        v.muted = true;
+        v.play().catch(() => {});
+        document.removeEventListener('touchstart', onGesture);
+        document.removeEventListener('click', onGesture);
+        document.removeEventListener('scroll', onGesture);
+      };
+      document.addEventListener('touchstart', onGesture, { once: true, passive: true });
+      document.addEventListener('click', onGesture, { once: true });
+      document.addEventListener('scroll', onGesture, { once: true, passive: true });
+    };
+
+    const tryPlay = () => {
+      if (cancelled) return;
+      const p = v.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          attachGestureFallback();
+        });
+      }
+    };
+
+    if (v.readyState >= 2) {
+      tryPlay();
+    } else {
+      v.addEventListener('loadeddata', tryPlay, { once: true });
+      v.addEventListener('canplay', tryPlay, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      v.removeEventListener('loadeddata', tryPlay);
+      v.removeEventListener('canplay', tryPlay);
+    };
+  }, []);
+
   return (
     <header className="hero" id="home">
       <video
+        ref={videoRef}
         className="video-bg"
         autoPlay
         loop
@@ -11,6 +71,8 @@ export default function HeroSection() {
         playsInline
         preload="auto"
         aria-hidden="true"
+        disablePictureInPicture
+        disableRemotePlayback
       >
         <source src="/videos/hero-epithete.mp4" type="video/mp4" />
       </video>
@@ -24,7 +86,7 @@ export default function HeroSection() {
           <span>DO NOT CROSS 🚫 DO NOT CROSS 🚫 DO NOT CROSS 🚫 DO NOT CROSS 🚫 DO NOT CROSS 🚫</span>
         </div>
       </div>
-      
+
       <div className="hero-content">
         <div className="hero-title">
           <span className="express-badge">LIVRAISON RAPIDE ⚡</span>
