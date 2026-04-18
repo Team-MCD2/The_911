@@ -53,10 +53,22 @@ export default function HeroSection() {
       v.addEventListener('canplay', tryPlay, { once: true });
     }
 
+    // Pause uniquement quand l'onglet passe en arrière-plan (économie batterie),
+    // jamais en fonction du scroll : la vidéo tourne en boucle dès l'arrivée.
+    const handleVisibility = () => {
+      if (document.hidden) {
+        v.pause();
+      } else {
+        v.play().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       cancelled = true;
       v.removeEventListener('loadeddata', tryPlay);
       v.removeEventListener('canplay', tryPlay);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 

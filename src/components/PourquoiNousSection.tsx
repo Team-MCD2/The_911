@@ -18,14 +18,15 @@ function TouchdownBlock() {
   const [loadError, setLoadError] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Intersection Observer : démarre la lecture dès 10% visible, et en plus on
-  // précharge (`preload="auto"`) pour que la vidéo soit prête au moment où elle
-  // entre dans le viewport (pas d'attente de chargement). Fallback user gesture
-  // si la policy autoplay mobile bloque la première tentative.
+  // Autoplay immédiat au montage : la vidéo démarre dès l'arrivée sur la page,
+  // qu'elle soit visible ou non. On force les attributs DOM (muted/playsinline)
+  // pour satisfaire les policies mobiles, et on prévoit un fallback au premier
+  // geste utilisateur si l'autoplay est bloqué (Low Power Mode, Data Saver…).
+  // La vidéo ne se met en pause que si l'onglet passe en arrière-plan — pour
+  // économiser la batterie sans dépendre du scroll.
   useEffect(() => {
-    const wrapper = wrapperRef.current;
     const video = videoRef.current;
-    if (!wrapper || !video) return;
+    if (!video) return;
 
     video.muted = true;
     video.defaultMuted = true;
@@ -33,6 +34,8 @@ function TouchdownBlock() {
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
+
+    let cancelled = false;
 
     const attachGestureFallback = () => {
       const onGesture = () => {
@@ -47,25 +50,39 @@ function TouchdownBlock() {
       document.addEventListener('scroll', onGesture, { once: true, passive: true });
     };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
-          const p = video.play();
-          if (p !== undefined) {
-            p.catch(() => {
-              setNeedsManualPlay(true);
-              attachGestureFallback();
-            });
-          }
-        } else if (!video.paused) {
-          video.pause();
-        }
-      },
-      { threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1] }
-    );
+    const tryPlay = () => {
+      if (cancelled) return;
+      const p = video.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          setNeedsManualPlay(true);
+          attachGestureFallback();
+        });
+      }
+    };
 
-    observer.observe(wrapper);
-    return () => observer.disconnect();
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.addEventListener('loadeddata', tryPlay, { once: true });
+      video.addEventListener('canplay', tryPlay, { once: true });
+    }
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        video.pause();
+      } else {
+        video.play().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      cancelled = true;
+      video.removeEventListener('loadeddata', tryPlay);
+      video.removeEventListener('canplay', tryPlay);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const handleManualPlay = () => {
