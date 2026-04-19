@@ -39,7 +39,6 @@ const LOCATIONS = [
 const NAVIGATION = [
   { label: 'Menu', href: '#menu' },
   { label: 'Pièces à conviction', href: '#best-sellers' },
-  { label: 'Pourquoi nous ?', href: '#about' },
   { label: 'Commande & Livraison', href: '#delivery' },
   { label: 'Scène du délit', href: '#ambiance' },
   { label: 'Témoignages', href: '#reviews' },

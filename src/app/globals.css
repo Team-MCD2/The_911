@@ -597,6 +597,50 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
     scroll-snap-align: center;
 }
 
+.menu-toggle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.menu-toggle-btn {
+    letter-spacing: 2px;
+    padding: 0.9rem 2.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.menu-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(255, 201, 4, 0.25);
+}
+
+.menu-toggle-btn.is-open {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.menu-toggle-hint {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    max-width: 460px;
+    margin: 0;
+}
+
+.menu-content {
+    animation: menuFadeIn 0.45s ease both;
+}
+
+@keyframes menuFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .menu-filters {
     display: flex;
     justify-content: center;

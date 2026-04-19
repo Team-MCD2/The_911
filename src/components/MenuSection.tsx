@@ -90,14 +90,17 @@ const menuData = [
 
 export default function MenuSection() {
   const [filter, setFilter] = useState('tout');
+  const [isOpen, setIsOpen] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const filteredMenu = filter === 'tout'
     ? menuData
     : menuData.filter(item => item.category === filter);
 
-  // Re-observe cards on every filter change so re-mounted nodes fade in correctly.
+  // Re-observe cards on every filter change (or open toggle) so re-mounted nodes fade in correctly.
   useEffect(() => {
+    if (!isOpen) return;
     const grid = gridRef.current;
     if (!grid) return;
 
@@ -116,43 +119,73 @@ export default function MenuSection() {
 
     cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
-  }, [filter]);
+  }, [filter, isOpen]);
+
+  const handleToggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    // When collapsing, scroll back to the section title to avoid leaving the user mid-page.
+    if (!next && sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
-    <section id="menu" className="menu-section">
+    <section id="menu" className="menu-section" ref={sectionRef}>
       <h2 className="section-title">LE MENU COMPLET</h2>
 
-      <div className="menu-filters">
-        <button className={`filter-btn ${filter === 'tout' ? 'active' : ''}`} onClick={() => setFilter('tout')}>TOUT</button>
-        <button className={`filter-btn ${filter === 'burgers' ? 'active' : ''}`} onClick={() => setFilter('burgers')}>SUSPECTS (Burgers)</button>
-        <button className={`filter-btn ${filter === 'sides' ? 'active' : ''}`} onClick={() => setFilter('sides')}>COMPLICES (Sides)</button>
-        <button className={`filter-btn ${filter === 'boissons' ? 'active' : ''}`} onClick={() => setFilter('boissons')}>CONTREBANDE (Boissons)</button>
+      <div className="menu-toggle-wrapper">
+        <button
+          type="button"
+          className={`btn btn-warning menu-toggle-btn ${isOpen ? 'is-open' : ''}`}
+          onClick={handleToggle}
+          aria-expanded={isOpen}
+          aria-controls="menu-content"
+        >
+          {isOpen ? 'RÉDUIRE LE DOSSIER' : 'OUVRIR LE DOSSIER'}
+        </button>
+        {!isOpen && (
+          <p className="menu-toggle-hint">
+            Cliquez pour consulter l&apos;intégralité des pièces à conviction.
+          </p>
+        )}
       </div>
 
-      <div className="menu-grid" ref={gridRef}>
-        {filteredMenu.map((item) => (
-          <article key={`${filter}-${item.id}`} className="menu-card reveal-on-scroll">
-            <div
-              className="card-img"
-              style={{
-                backgroundImage: `${GRADIENT_OVERLAY}, url('${item.img}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <div className="confidential-stamp">EVIDENCE #{item.id}</div>
-            </div>
-            <div className="card-content">
-              <h3>{item.name}</h3>
-              <p>{item.desc}</p>
-              <div className="card-footer">
-                <span className="price">{item.price}</span>
-                <button className="btn-add">+</button>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
+      {isOpen && (
+        <div id="menu-content" className="menu-content">
+          <div className="menu-filters">
+            <button className={`filter-btn ${filter === 'tout' ? 'active' : ''}`} onClick={() => setFilter('tout')}>TOUT</button>
+            <button className={`filter-btn ${filter === 'burgers' ? 'active' : ''}`} onClick={() => setFilter('burgers')}>SUSPECTS (Burgers)</button>
+            <button className={`filter-btn ${filter === 'sides' ? 'active' : ''}`} onClick={() => setFilter('sides')}>COMPLICES (Sides)</button>
+            <button className={`filter-btn ${filter === 'boissons' ? 'active' : ''}`} onClick={() => setFilter('boissons')}>CONTREBANDE (Boissons)</button>
+          </div>
+
+          <div className="menu-grid" ref={gridRef}>
+            {filteredMenu.map((item) => (
+              <article key={`${filter}-${item.id}`} className="menu-card reveal-on-scroll">
+                <div
+                  className="card-img"
+                  style={{
+                    backgroundImage: `${GRADIENT_OVERLAY}, url('${item.img}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                >
+                  <div className="confidential-stamp">EVIDENCE #{item.id}</div>
+                </div>
+                <div className="card-content">
+                  <h3>{item.name}</h3>
+                  <p>{item.desc}</p>
+                  <div className="card-footer">
+                    <span className="price">{item.price}</span>
+                    <button className="btn-add">+</button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
