@@ -24,7 +24,7 @@ npm run lint       # ESLint (eslint-config-next)
 | Rôle | Choix |
 |---|---|
 | Framework | Next.js `16.2.4` (App Router, Turbopack) |
-| UI | React `19.2.4` |
+| UI | React `19.2.3` |
 | Langage | TypeScript strict |
 | Styling | CSS global (`src/app/globals.css`) |
 | Polices | `next/font/google` → Inter + Russo One |
