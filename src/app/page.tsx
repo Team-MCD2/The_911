@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import BestSellersSection from '@/components/BestSellersSection';
+import PourquoiNousSection from '@/components/PourquoiNousSection';
 import MenuSection from '@/components/MenuSection';
 import DeliverySection from '@/components/DeliverySection';
 import ReviewsSection from '@/components/ReviewsSection';
@@ -36,6 +37,8 @@ export default function Home() {
       <HeroSection />
       <div className="section-separator with-emblem"></div>
       <BestSellersSection />
+      <div className="section-separator"></div>
+      <PourquoiNousSection />
       <div className="section-separator with-emblem"></div>
       <MenuSection />
       <div className="section-separator"></div>

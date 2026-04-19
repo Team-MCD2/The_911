@@ -6,8 +6,8 @@ import Link from 'next/link';
 const NAV_ITEMS = [
   { href: '#best-sellers', label: 'Best Sellers' },
   { href: '#menu', label: 'Menu' },
+  { href: '#about', label: 'Le Concept' },
   { href: '#delivery', label: 'Livraison' },
-  { href: '#ambiance', label: 'Ambiance' },
 ];
 
 export default function Navbar() {
