@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Mentions légales · THE 911',
   description:
-    'Mentions légales, politique de confidentialité et gestion des cookies du site THE 911 - Restaurant gourmet burger à Toulouse et Plaisance-du-Touch.',
+    'Mentions légales, politique de confidentialité et gestion des cookies du site THE 911 - Restaurant gourmet burger à Plaisance-du-Touch (10 Rue des Écoles, 31830).',
 };
 
 export default function MentionsLegalesPage() {
@@ -45,12 +45,8 @@ export default function MentionsLegalesPage() {
             <dt>Siège social</dt>
             <dd>10 Rue des Écoles, 31830 Plaisance-du-Touch</dd>
 
-            <dt>Adresses d&apos;exploitation</dt>
-            <dd>
-              9 Rue Mespoul, 31400 Toulouse
-              <br />
-              10 Rue des Écoles, 31830 Plaisance-du-Touch
-            </dd>
+            <dt>Adresse d&apos;exploitation</dt>
+            <dd>10 Rue des Écoles, 31830 Plaisance-du-Touch</dd>
 
             <dt>Dirigeant</dt>
             <dd>Johnson-Laurent LOSBAR</dd>
@@ -85,7 +81,7 @@ export default function MentionsLegalesPage() {
             <dd>
               <a href="mailto:contact@the911.fr">contact@the911.fr</a>
               <br />
-              <a href="tel:+33534000000">05 34 00 00 00</a>
+              <a href="tel:+33759652689">07 59 65 26 89</a>
             </dd>
           </dl>
 

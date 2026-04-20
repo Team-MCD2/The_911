@@ -3,100 +3,227 @@
 import { useEffect, useRef, useState } from 'react';
 
 const GRADIENT_OVERLAY =
-  "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)";
+  'linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.55) 100%)';
 
-const menuData = [
+type MenuItem = {
+  id: number;
+  category: 'burgers' | 'sandwichs' | 'croq' | 'enfant';
+  name: string;
+  desc: string;
+  priceSeul: string;
+  priceMenu: string;
+  img: string;
+};
+
+// Données issues de la carte officielle THE 911 (recto + verso fournis par le restaurant).
+// Premier prix = produit seul, second prix = formule menu (avec boisson).
+// Toute correction des prix doit se faire en regardant la carte officielle uniquement.
+const menuData: MenuItem[] = [
+  // ============== BURGERS ==============
   {
     id: 1,
     category: 'burgers',
-    name: "LE RÉCIDIVISTE",
-    desc: "Double smash burger, cheddar, bacon.",
-    price: "13.50€",
-    img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=900&auto=format&fit=crop",
+    name: 'SMASH 1',
+    desc: '1 steak smashé, cheddar, oignons.',
+    priceSeul: '6,00€',
+    priceMenu: '8,50€',
+    img: '/images/menu/smash-1.jpeg',
   },
   {
     id: 2,
     category: 'burgers',
-    name: "LE COMPLICE",
-    desc: "Poulet frit épicé, coleslaw, mayo fumée.",
-    price: "12.00€",
-    img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?q=80&w=900&auto=format&fit=crop",
+    name: 'SMASH 2',
+    desc: '2 steaks smashés, cheddar, oignons.',
+    priceSeul: '7,00€',
+    priceMenu: '9,50€',
+    img: '/images/menu/smash-2.jpeg',
   },
   {
     id: 3,
     category: 'burgers',
-    name: "LE BRAQUAGE",
-    desc: "Effiloché de porc BBQ, oignons rings.",
-    price: "14.50€",
-    img: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?q=80&w=900&auto=format&fit=crop",
+    name: 'LITTLE BEEF',
+    desc: 'Bœuf effiloché, crudités, fromage.',
+    priceSeul: '6,50€',
+    priceMenu: '9,00€',
+    img: '/images/menu/little-beef.jpeg',
   },
   {
     id: 4,
     category: 'burgers',
-    name: "LE CARTEL",
-    desc: "Smash burger, jalapeños, cheddar fondu, oignons crispy.",
-    price: "14.00€",
-    img: "https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=900&auto=format&fit=crop",
+    name: 'CHICKEN',
+    desc: 'Chicken, emmental, bacon, crudités.',
+    priceSeul: '7,00€',
+    priceMenu: '9,50€',
+    img: '/images/menu/chicken.jpeg',
   },
+
+  // ============== SANDWICHS ==============
   {
     id: 5,
-    category: 'sides',
-    name: "FRIES DÉLIT",
-    desc: "Frites maison, chapelure épicée, sel truffé.",
-    price: "4.50€",
-    img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: 'PHILLY',
+    desc: 'Steak, cheddar, crudités.',
+    priceSeul: '7,50€',
+    priceMenu: '10,00€',
+    img: '/images/menu/philly.jpeg',
   },
   {
     id: 6,
-    category: 'sides',
-    name: "CHEDDAR CRIME",
-    desc: "Frites noyées sous le cheddar fondu et bacon croustillant.",
-    price: "6.50€",
-    img: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: 'HARLEM',
+    desc: 'Steak, cordon-bleu, cheddar, crudités.',
+    priceSeul: '9,50€',
+    priceMenu: '12,00€',
+    img: '/images/menu/harlem.jpeg',
   },
   {
     id: 7,
-    category: 'sides',
-    name: "ONION SQUAD",
-    desc: "Rondelles d'oignons panées, sauce ranch maison.",
-    price: "5.50€",
-    img: "https://images.unsplash.com/photo-1639024471283-03518883512d?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: 'PULLED BEEF',
+    desc: 'Bœuf effiloché, crudités, fromage fondu.',
+    priceSeul: '11,00€',
+    priceMenu: '13,50€',
+    img: '/images/menu/pulled-beef.jpeg',
   },
   {
     id: 8,
-    category: 'boissons',
-    name: "SÉRUM DE VÉRITÉ",
-    desc: "Limonade maison piquante, citron vert, gingembre.",
-    price: "3.50€",
-    img: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: '213',
+    desc: 'Steak, cheddar, kiri, frite, omelette, râpé.',
+    priceSeul: '9,50€',
+    priceMenu: '12,00€',
+    img: '/images/menu/213.jpeg',
   },
   {
     id: 9,
-    category: 'boissons',
-    name: "MILK FELONY",
-    desc: "Milkshake vanille Madagascar, caramel beurre salé.",
-    price: "5.00€",
-    img: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: 'BROOKLYN',
+    desc: 'Steak, cheddar, œuf, bacon, crudités.',
+    priceSeul: '9,50€',
+    priceMenu: '12,00€',
+    img: '/images/menu/brooklyn.jpeg',
   },
   {
     id: 10,
-    category: 'boissons',
-    name: "COCA CARTEL",
-    desc: "Soda cola artisanal servi ultra frappé.",
-    price: "3.00€",
-    img: "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?q=80&w=900&auto=format&fit=crop",
+    category: 'sandwichs',
+    name: 'MOUNTAIN',
+    desc: 'Steak, cheddar, raclette, rösti, bacon, crudités.',
+    priceSeul: '11,00€',
+    priceMenu: '13,50€',
+    img: '/images/menu/mountain.jpeg',
+  },
+  {
+    id: 11,
+    category: 'sandwichs',
+    name: 'BBF',
+    desc: 'Steak, bacon, crème, oignons, fromage gratiné — pain en tranche.',
+    priceSeul: '7,00€',
+    priceMenu: '9,50€',
+    img: '/images/menu/bbf.jpeg',
+  },
+  {
+    id: 12,
+    category: 'sandwichs',
+    name: 'BOSTON',
+    desc: 'Chicken, steak, bacon, emmental, crudités.',
+    priceSeul: '11,00€',
+    priceMenu: '13,50€',
+    img: '/images/menu/boston.jpeg',
+  },
+  {
+    id: 13,
+    category: 'sandwichs',
+    name: 'CHICANOS',
+    desc: 'Escalope, sauce spicy, cheddar, oignons.',
+    priceSeul: '9,50€',
+    priceMenu: '12,00€',
+    img: '/images/menu/chicanos.jpeg',
+  },
+  {
+    id: 14,
+    category: 'sandwichs',
+    name: 'FOREST',
+    desc: 'Escalope, sauce forestière, fromage râpé, crudités.',
+    priceSeul: '9,50€',
+    priceMenu: '12,00€',
+    img: '/images/menu/forest.jpeg',
+  },
+
+  // ============== LES CROQ'S ==============
+  {
+    id: 15,
+    category: 'croq',
+    name: 'CROQ',
+    desc: 'Jambon de dinde, crème fraîche.',
+    priceSeul: '3,50€',
+    priceMenu: '6,00€',
+    img: '/images/menu/croq.jpeg',
+  },
+  {
+    id: 16,
+    category: 'croq',
+    name: 'CROQ N BEEF',
+    desc: 'Jambon de dinde, steak, cheddar, crudités, crème.',
+    priceSeul: '7,00€',
+    priceMenu: '9,50€',
+    img: '/images/menu/croq-n-beef.jpeg',
+  },
+  {
+    id: 17,
+    category: 'croq',
+    name: 'CROQ N GOAT',
+    desc: 'Jambon de dinde, chèvre, miel, crème fraîche.',
+    priceSeul: '4,00€',
+    priceMenu: '6,50€',
+    img: '/images/menu/croq-n-goat.jpeg',
+  },
+
+  // ============== MENU ENFANT & DESSERTS ==============
+  {
+    id: 18,
+    category: 'enfant',
+    name: 'MENU ENFANT',
+    desc: 'Cheeseburger ou nuggets, frites, compote, Capri-Sun.',
+    priceSeul: '6,00€',
+    priceMenu: '6,00€',
+    img: '/images/menu/menu-enfant.jpeg',
+  },
+  {
+    id: 19,
+    category: 'enfant',
+    name: 'TIRAMISU',
+    desc: 'Tiramisu maison servi en pot.',
+    priceSeul: '3,50€',
+    priceMenu: '3,50€',
+    img: '/images/menu/tiramisu.jpeg',
+  },
+  {
+    id: 20,
+    category: 'enfant',
+    name: 'MILKSHAKE',
+    desc: 'Chocolat, vanille ou fraise. Suppléments 1€ (banane, bueno, oreo, country) · chantilly 0,50€.',
+    priceSeul: '4,50€',
+    priceMenu: '4,50€',
+    img: '/images/menu/milkshake.jpeg',
   },
 ];
 
+const FILTERS: { id: 'tout' | MenuItem['category']; label: string }[] = [
+  { id: 'tout', label: 'TOUT' },
+  { id: 'burgers', label: 'BURGERS' },
+  { id: 'sandwichs', label: 'SANDWICHS' },
+  { id: 'croq', label: "CROQ' MR" },
+  { id: 'enfant', label: 'ENFANT & EXTRAS' },
+];
+
 export default function MenuSection() {
-  const [filter, setFilter] = useState('tout');
+  const [filter, setFilter] = useState<'tout' | MenuItem['category']>('tout');
   const [isOpen, setIsOpen] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const filteredMenu = filter === 'tout'
-    ? menuData
-    : menuData.filter(item => item.category === filter);
+  const filteredMenu =
+    filter === 'tout' ? menuData : menuData.filter((item) => item.category === filter);
 
   // Re-observe cards on every filter change (or open toggle) so re-mounted nodes fade in correctly.
   useEffect(() => {
@@ -124,7 +251,6 @@ export default function MenuSection() {
   const handleToggle = () => {
     const next = !isOpen;
     setIsOpen(next);
-    // When collapsing, scroll back to the section title to avoid leaving the user mid-page.
     if (!next && sectionRef.current) {
       sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -133,6 +259,9 @@ export default function MenuSection() {
   return (
     <section id="menu" className="menu-section" ref={sectionRef}>
       <h2 className="section-title">LE MENU COMPLET</h2>
+      <p className="menu-section-intro">
+        Produits frais, fait maison, halal — disponibles sur place, à emporter ou en livraison.
+      </p>
 
       <div className="menu-toggle-wrapper">
         <button
@@ -154,10 +283,15 @@ export default function MenuSection() {
       {isOpen && (
         <div id="menu-content" className="menu-content">
           <div className="menu-filters">
-            <button className={`filter-btn ${filter === 'tout' ? 'active' : ''}`} onClick={() => setFilter('tout')}>TOUT</button>
-            <button className={`filter-btn ${filter === 'burgers' ? 'active' : ''}`} onClick={() => setFilter('burgers')}>SUSPECTS (Burgers)</button>
-            <button className={`filter-btn ${filter === 'sides' ? 'active' : ''}`} onClick={() => setFilter('sides')}>COMPLICES (Sides)</button>
-            <button className={`filter-btn ${filter === 'boissons' ? 'active' : ''}`} onClick={() => setFilter('boissons')}>CONTREBANDE (Boissons)</button>
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                className={`filter-btn ${filter === f.id ? 'active' : ''}`}
+                onClick={() => setFilter(f.id)}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
 
           <div className="menu-grid" ref={gridRef}>
@@ -170,6 +304,8 @@ export default function MenuSection() {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                   }}
+                  role="img"
+                  aria-label={`${item.name} — ${item.desc}`}
                 >
                   <div className="confidential-stamp">EVIDENCE #{item.id}</div>
                 </div>
@@ -177,13 +313,26 @@ export default function MenuSection() {
                   <h3>{item.name}</h3>
                   <p>{item.desc}</p>
                   <div className="card-footer">
-                    <span className="price">{item.price}</span>
-                    <button className="btn-add">+</button>
+                    <span className="price">
+                      {item.priceSeul}
+                      {item.priceSeul !== item.priceMenu && (
+                        <small className="price-menu"> · {item.priceMenu} menu</small>
+                      )}
+                    </span>
+                    <button className="btn-add" aria-label={`Ajouter ${item.name}`}>+</button>
                   </div>
                 </div>
               </article>
             ))}
           </div>
+
+          <p className="menu-disclaimer">
+            <strong>1ᵉʳ prix</strong> = produit seul · <strong>2ᵈ prix</strong> = formule menu (avec boisson).
+            <br />
+            <strong>Suppléments à 1€</strong> : rösti, œuf, bacon, kiri, chèvre, cheddar, raclette.
+            <br />
+            <strong>À grignoter (5€)</strong> : mozza sticks ×5, nuggets ×6, bouchées camembert ×5.
+          </p>
         </div>
       )}
     </section>

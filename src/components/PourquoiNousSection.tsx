@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 const VIDEO_SRC = '/videos/video.mp4';
-const VIDEO_POSTER =
-  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=900&auto=format&fit=crop';
-const INSTAGRAM_URL = 'https://www.instagram.com/reel/DBCmh8jMMpV/';
+const VIDEO_POSTER = '/images/menu/philly-cheese.jpeg';
+const INSTAGRAM_URL = 'https://www.instagram.com/the_911_burger/';
 
 function TouchdownBlock() {
   const wrapperRef = useRef<HTMLDivElement>(null);

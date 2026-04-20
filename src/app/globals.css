@@ -597,6 +597,34 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
     scroll-snap-align: center;
 }
 
+.menu-section-intro {
+    text-align: center;
+    color: var(--color-text-muted);
+    max-width: 640px;
+    margin: -1.5rem auto 2.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.menu-disclaimer {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin: 3rem auto 0;
+    max-width: 720px;
+    border-top: 1px dashed rgba(255, 201, 4, 0.18);
+    padding-top: 1.5rem;
+    line-height: 1.6;
+}
+
+.price-menu {
+    color: var(--color-text-muted);
+    font-size: 0.7em;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-left: 0.25rem;
+}
+
 .menu-toggle-wrapper {
     display: flex;
     flex-direction: column;
