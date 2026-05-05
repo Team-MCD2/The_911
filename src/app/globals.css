@@ -5016,6 +5016,15 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
 
 /* === Petite tablette / mobile L (max 768px) === */
 @media (max-width: 768px) {
+  /* Hide dispatcher to prevent overlap on small screens */
+  .dispatcher { display: none !important; }
+
+  /* Add some padding to sections to prevent tight edges */
+  .menu-section, .gang-section, .wanted-section, .delivery-section, .ambiance-section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
   /* Le Gang : passe en 1 colonne plein largeur des 768px car
      les cartes deviennent vite trop etroites a 2 colonnes */
   .gang-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
@@ -5091,15 +5100,17 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
   .section-stamp__badge-label { font-size: 0.6rem; letter-spacing: 0.18em; }
   .section-stamp__badge-evidence { font-size: 0.62rem; padding-left: 0.4rem; }
 
-  /* Dispatcher : encore plus compact, prend moins d'espace en haut */
-  .dispatcher {
-    width: min(220px, calc(100vw - 1rem));
-    font-size: 0.7rem;
+  /* Cookie banner plus compact */
+  .cookie-banner__inner {
+    padding: 0.75rem;
+    flex-direction: column;
+    gap: 0.75rem;
   }
-  .dispatcher__title { font-size: 0.6rem; }
-  .dispatcher__code { font-size: 0.6rem; padding: 0.1rem 0.3rem; }
-  .dispatcher__body { padding: 0.5rem 0.6rem; font-size: 0.7rem; }
-  .dispatcher__footer { padding: 0.3rem 0.6rem; font-size: 0.55rem; }
+  .cookie-banner__copy { text-align: center; }
+  .cookie-banner__title { font-size: 0.9rem; margin-bottom: 0.25rem; }
+  .cookie-banner__text { font-size: 0.75rem; }
+  .cookie-banner__actions { width: 100%; justify-content: center; }
+  .cookie-banner__btn { padding: 0.6rem 1rem; font-size: 0.8rem; }
 
   /* Caution tape (existante) : taille reduite */
   .caution-tape span { font-size: 0.85rem; }
