@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import OpenStatusBadge from './OpenStatusBadge';
 
 const NAV_ITEMS = [
   { href: '#best-sellers', label: 'Best Sellers' },
@@ -9,6 +10,9 @@ const NAV_ITEMS = [
   { href: '#about', label: 'Le Concept' },
   { href: '#delivery', label: 'Livraison' },
 ];
+
+const PHONE_HREF = 'tel:+33759652689';
+const PHONE_LABEL = '07 59 65 26 89';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -64,9 +68,12 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <Link href="#delivery" className="btn btn-warning navbar-cta">
-          COMMANDER
-        </Link>
+        <div className="navbar-actions">
+          <OpenStatusBadge />
+          <Link href="#delivery" className="btn btn-warning navbar-cta">
+            COMMANDER
+          </Link>
+        </div>
 
         <button
           type="button"
@@ -95,6 +102,9 @@ export default function Navbar() {
           aria-hidden="true"
         />
         <div className="mobile-menu__panel">
+          <div className="mobile-menu__status">
+            <OpenStatusBadge />
+          </div>
           <ul className="mobile-menu__list">
             {NAV_ITEMS.map((item, i) => (
               <li
@@ -119,9 +129,28 @@ export default function Navbar() {
           >
             COMMANDER MAINTENANT
           </Link>
+          <a
+            href={PHONE_HREF}
+            className="mobile-menu__call"
+            onClick={closeMenu}
+            aria-label={`Appeler THE 911 au ${PHONE_LABEL}`}
+          >
+            <span aria-hidden="true">☎</span>
+            {PHONE_LABEL}
+          </a>
           <p className="mobile-menu__tagline">GUILTY SANDWICH · THE 911</p>
         </div>
       </div>
+
+      {/* Floating "appeler" CTA - mobile uniquement, hors mobile-menu ouvert */}
+      <a
+        href={PHONE_HREF}
+        className={`floating-call ${menuOpen ? 'is-hidden' : ''}`}
+        aria-label={`Appeler THE 911 au ${PHONE_LABEL}`}
+      >
+        <span className="floating-call__icon" aria-hidden="true">☎</span>
+        <span className="floating-call__label">Appeler</span>
+      </a>
     </>
   );
 }

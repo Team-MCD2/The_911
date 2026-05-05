@@ -1,7 +1,17 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
 import Image from 'next/image';
+
+/**
+ * DELIVERY - "TRANSFERT DE L'OBJET DU DÉLIT"
+ *
+ * Refonte 2026-05 : abandon du visuel "football américain" (ballons + stade +
+ * scoreboard) qui ne correspondait plus à la nouvelle DA police/investigation.
+ * Remplacé par des "paquets de preuves scellés" - chaque plateforme est
+ * presentee comme une enveloppe d'inculpation kraft, scellee par une bande
+ * caution-tape, avec un tampon "EVIDENCE" rouge en diagonale et un numero
+ * de dossier monospace. Coherent avec les Wanted Posters et le Gang.
+ */
 
 type Brand = 'uber' | 'deliveroo';
 
@@ -13,6 +23,8 @@ type BrandStat = {
 
 type PlatformConfig = {
   brand: Brand;
+  caseCode: string; // "UE" pour Uber, "DR" pour Deliveroo (numero de dossier)
+  caseNumber: string; // "911-001"
   href: string;
   ariaLabel: string;
   ctaLabel: string;
@@ -31,194 +43,139 @@ const DELIVEROO_URL =
 const PLATFORMS: PlatformConfig[] = [
   {
     brand: 'uber',
+    caseCode: 'UE',
+    caseNumber: '911-001',
     href: UBER_EATS_URL,
     ariaLabel: 'Commander sur Uber Eats - The 911',
-    ctaLabel: 'Commander sur Uber Eats',
+    ctaLabel: 'Réquisitionner Uber Eats',
     logoSrc: '/images/brands/ubereats.png',
     logoAlt: 'Uber Eats',
-    logoWidth: 96,
-    logoHeight: 96,
+    logoWidth: 220,
+    logoHeight: 80,
     stats: [
-      { icon: '⭐', value: '4.9', label: 'Note client' },
-      { icon: '⚡', value: '25 min', label: 'Livraison' },
-      { icon: '🔥', value: '+500', label: 'Commandes' },
+      { icon: '★', value: '4.9', label: 'Témoignages' },
+      { icon: '⏱', value: '25 min', label: 'Transfert' },
+      { icon: '⚑', value: '+500', label: 'Dossiers' },
     ],
   },
   {
     brand: 'deliveroo',
+    caseCode: 'DR',
+    caseNumber: '911-002',
     href: DELIVEROO_URL,
     ariaLabel: 'Commander sur Deliveroo - The 911',
-    ctaLabel: 'Commander sur Deliveroo',
+    ctaLabel: 'Réquisitionner Deliveroo',
     logoSrc: '/images/brands/deliveroo.png',
     logoAlt: 'Deliveroo',
-    logoWidth: 148,
-    logoHeight: 74,
+    logoWidth: 220,
+    logoHeight: 80,
     stats: [
-      { icon: '⭐', value: '4.8', label: 'Note client' },
-      { icon: '⚡', value: '20 min', label: 'Livraison' },
-      { icon: '🔥', value: '+300', label: 'Commandes' },
+      { icon: '★', value: '4.8', label: 'Témoignages' },
+      { icon: '⏱', value: '20 min', label: 'Transfert' },
+      { icon: '⚑', value: '+300', label: 'Dossiers' },
     ],
   },
 ];
 
-/**
- * Ballon "football américain" premium :
- *  - tilt 3D dynamique suivant la souris (via variables CSS, pas de re-render)
- *  - gloss qui suit le curseur
- *  - press réaliste (scale down + rebond spring au relâchement)
- *  - animation idle (breathing) sur un wrapper interne
- */
-function FootballBall({ platform }: { platform: PlatformConfig }) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const rafRef = useRef<number | null>(null);
-
-  const applyTransform = useCallback((x: number, y: number) => {
-    const el = ref.current;
-    if (!el) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const ry = (x - 0.5) * 20;
-      const rx = (0.5 - y) * 14;
-      el.style.setProperty('--rx', `${rx}deg`);
-      el.style.setProperty('--ry', `${ry}deg`);
-      el.style.setProperty('--mx', `${x * 100}%`);
-      el.style.setProperty('--my', `${y * 100}%`);
-    });
-  }, []);
-
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent<HTMLAnchorElement>) => {
-      if (e.pointerType === 'touch') return;
-      const el = e.currentTarget;
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      applyTransform(x, y);
-    },
-    [applyTransform]
-  );
-
-  const resetTransform = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    el.style.setProperty('--rx', '0deg');
-    el.style.setProperty('--ry', '0deg');
-    el.style.setProperty('--mx', '50%');
-    el.style.setProperty('--my', '35%');
-  }, []);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLAnchorElement>) => {
-      e.currentTarget.classList.add('is-pressed');
-    },
-    []
-  );
-
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent<HTMLAnchorElement>) => {
-      e.currentTarget.classList.remove('is-pressed');
-    },
-    []
-  );
-
-  return (
-    <a
-      ref={ref}
-      href={platform.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`ball-btn ball-btn--${platform.brand}`}
-      aria-label={platform.ariaLabel}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetTransform}
-      onPointerCancel={(e) => {
-        resetTransform();
-        e.currentTarget.classList.remove('is-pressed');
-      }}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-    >
-      <span className="ball-btn__enter">
-        <span className="ball-btn__idle">
-          <span className="ball-btn__body">
-            <span className="ball-btn__tip ball-btn__tip--left" aria-hidden="true" />
-            <span className="ball-btn__tip ball-btn__tip--right" aria-hidden="true" />
-
-            <span className="ball-btn__stripe" aria-hidden="true" />
-
-            <span className="ball-btn__laces" aria-hidden="true">
-              <span className="ball-btn__laces-spine" />
-              <span />
-              <span />
-              <span />
-              <span />
-              <span />
-              <span />
-            </span>
-
-            <span className={`ball-btn__brand ball-btn__brand--${platform.brand}`}>
-              <Image
-                src={platform.logoSrc}
-                alt={platform.logoAlt}
-                width={platform.logoWidth}
-                height={platform.logoHeight}
-                className="ball-btn__logo-img"
-                priority={false}
-                sizes="(max-width: 600px) 80px, 110px"
-              />
-            </span>
-
-            <span className="ball-btn__shine" aria-hidden="true" />
-            <span className="ball-btn__gloss" aria-hidden="true" />
-          </span>
-        </span>
-      </span>
-    </a>
-  );
-}
+const LOGO_SIZES = '(max-width: 600px) 65vw, 220px';
 
 /**
- * Carte complète par plateforme : ballon (scène immersive) + stats + CTA.
- * La hiérarchie visuelle est : ballon → stats chiffrées → bouton de conversion.
+ * Paquet de preuves scelle - une enveloppe kraft par plateforme.
+ * Toute la zone est cliquable (link wrapper), mais on a aussi un CTA explicite
+ * en bas pour les utilisateurs qui se reperent au bouton.
  */
-function PlatformCard({ platform }: { platform: PlatformConfig }) {
+function EvidencePackage({ platform }: { platform: PlatformConfig }) {
   return (
     <article
-      className={`delivery-card delivery-card--${platform.brand}`}
+      className={`evidence-package evidence-package--${platform.brand}`}
       aria-label={platform.ariaLabel}
     >
-      <div className={`ball-slot ball-slot--${platform.brand}`}>
-        <span className="ball-slot__aura" aria-hidden="true" />
-        <span className="ball-slot__sparks" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
+      {/* Tampon "EVIDENCE" rouge en diagonale, coin sup. droit */}
+      <span className="evidence-package__stamp" aria-hidden="true">
+        EVIDENCE
+      </span>
+
+      {/* En-tete : numero de dossier + code-barres deco */}
+      <header className="evidence-package__header">
+        <span className="evidence-package__case">
+          DOSSIER N°{platform.caseNumber}-{platform.caseCode}
         </span>
-        <FootballBall platform={platform} />
-        <span className="ball-slot__glow" aria-hidden="true" />
+        <span className="evidence-package__barcode" aria-hidden="true">
+          ▌▌ ▌▌▌ ▌ ▌▌ ▌▌▌▌ ▌▌
+        </span>
+      </header>
+
+      {/* Section "destinataire" - logo de la plateforme */}
+      <div className="evidence-package__recipient">
+        <span className="evidence-package__recipient-label">
+          Transporteur autorisé
+        </span>
+        <div className="evidence-package__logo-wrap">
+          <Image
+            src={platform.logoSrc}
+            alt={platform.logoAlt}
+            width={platform.logoWidth}
+            height={platform.logoHeight}
+            sizes={LOGO_SIZES}
+            className="evidence-package__logo"
+          />
+        </div>
       </div>
 
-      <ul className={`ball-stats ball-stats--${platform.brand}`} aria-label="Statistiques">
+      {/* Bande caution-tape : scelle le paquet visuellement */}
+      <div className="evidence-package__seal" aria-hidden="true">
+        <span>
+          911 · DO NOT CROSS · 911 · DO NOT CROSS · 911 · DO NOT CROSS
+        </span>
+      </div>
+
+      {/* Statistiques en monospace, formatees comme un releve d'archive */}
+      <ul className="evidence-package__stats" aria-label="Indicateurs du dossier">
         {platform.stats.map((stat) => (
-          <li key={stat.label} className="ball-stat">
-            <span className="ball-stat__icon" aria-hidden="true">{stat.icon}</span>
-            <span className="ball-stat__value">{stat.value}</span>
-            <span className="ball-stat__label">{stat.label}</span>
+          <li key={stat.label} className="evidence-package__stat">
+            <span className="evidence-package__stat-icon" aria-hidden="true">
+              {stat.icon}
+            </span>
+            <span className="evidence-package__stat-value">{stat.value}</span>
+            <span className="evidence-package__stat-label">{stat.label}</span>
           </li>
         ))}
       </ul>
 
+      {/* Pied : Chain of custody simulee, avec empreinte digitale SVG */}
+      <footer className="evidence-package__chain" aria-hidden="true">
+        <span className="evidence-package__chain-label">CHAIN OF CUSTODY</span>
+        <span className="evidence-package__chain-line"></span>
+        <svg
+          className="evidence-package__fingerprint"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        >
+          {/* Petite empreinte digitale stylisee : 4 arcs concentriques */}
+          <path d="M12 4c-3.3 0-6 2.7-6 6 0 2 .6 3.8 1.7 5.3" />
+          <path d="M12 6c-2.2 0-4 1.8-4 4 0 1.5.4 2.9 1.1 4.1" />
+          <path d="M12 8c-1.1 0-2 .9-2 2 0 1.2.4 2.3 1.1 3.2" />
+          <path d="M12 10v2" />
+          <path d="M14.5 16c-.9.6-1.7 1.3-2.5 2" />
+          <path d="M16 13c-.4 1-.9 1.9-1.5 2.7" />
+          <path d="M18 10c0 1.5-.3 3-.8 4.3" />
+        </svg>
+      </footer>
+
+      {/* CTA principal - bouton "Réquisitionner" en bas */}
       <a
         href={platform.href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`ball-cta ball-cta--${platform.brand}`}
+        className="evidence-package__cta"
       >
-        <span className="ball-cta__label">{platform.ctaLabel}</span>
-        <span className="ball-cta__arrow" aria-hidden="true">→</span>
+        <span className="evidence-package__cta-label">{platform.ctaLabel}</span>
+        <span className="evidence-package__cta-arrow" aria-hidden="true">
+          →
+        </span>
       </a>
     </article>
   );
@@ -226,26 +183,17 @@ function PlatformCard({ platform }: { platform: PlatformConfig }) {
 
 export default function DeliverySection() {
   return (
-    <section id="delivery" className="delivery-section">
-      <h2 className="section-title">COMMANDE & LIVRAISON</h2>
+    <section id="delivery" className="delivery-section delivery-section--evidence">
+      <h2 className="section-title">TRANSFERT DE L&apos;OBJET DU DÉLIT</h2>
       <p className="delivery-intro">
         Faites expédier les pièces à conviction directement à votre planque.
+        <br />
+        <em>Deux transporteurs assermentés. Aucun témoin.</em>
       </p>
 
-      <div className="delivery-options reveal-on-scroll">
-        <div className="delivery-stage__field" aria-hidden="true" />
-        <div className="delivery-stage__ambient" aria-hidden="true" />
-        <div className="delivery-stage__spotlights" aria-hidden="true">
-          <span />
-          <span />
-        </div>
-        <div className="delivery-stage__scoreboard" aria-hidden="true">
-          <span className="delivery-stage__scoreboard-dot" />
-          <span className="delivery-stage__scoreboard-text">LIVE · DELIVERY</span>
-        </div>
-
+      <div className="evidence-grid reveal-on-scroll">
         {PLATFORMS.map((platform) => (
-          <PlatformCard key={platform.brand} platform={platform} />
+          <EvidencePackage key={platform.brand} platform={platform} />
         ))}
       </div>
     </section>

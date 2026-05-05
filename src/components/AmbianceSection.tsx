@@ -10,6 +10,7 @@
  *
  * Mise en page bento-grid 3 colonnes (featured + tall + wide + std).
  */
+import Image from 'next/image';
 
 type Scene = {
   src: string;
@@ -19,6 +20,13 @@ type Scene = {
   tag: string;
   size: 'featured' | 'tall' | 'wide' | 'std';
 };
+
+/** Tailles `srcset` indicatives pour next/image en mode `fill`.
+ * Mobile : 1 col plein écran. Tablette : 2 col. Desktop : 3 col (featured/wide = 2/3, tall/std = 1/3). */
+const AMBIANCE_SIZES =
+  '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw';
+const AMBIANCE_SIZES_LARGE =
+  '(max-width: 600px) 100vw, (max-width: 900px) 100vw, 66vw';
 
 const scenes: Scene[] = [
   {
@@ -65,26 +73,33 @@ export default function AmbianceSection() {
       </p>
 
       <div className="ambiance-grid">
-        {scenes.map((scene, i) => (
-          <figure
-            key={scene.evidence}
-            className={`ambiance-item ambiance-item--${scene.size} reveal-on-scroll`}
-            style={{ transitionDelay: `${i * 80}ms` }}
-          >
-            <img
-              src={scene.src}
-              alt={scene.alt}
-              loading="lazy"
-              className="ambiance-item__img"
-            />
-            <div className="ambiance-item__shade" aria-hidden="true" />
-            <figcaption className="ambiance-item__caption">
-              <span className="ambiance-item__evidence">{scene.evidence}</span>
-              <span className="ambiance-item__title">{scene.title}</span>
-              <span className="ambiance-item__tag">{scene.tag}</span>
-            </figcaption>
-          </figure>
-        ))}
+        {scenes.map((scene, i) => {
+          const isLarge = scene.size === 'featured' || scene.size === 'wide';
+          return (
+            <figure
+              key={scene.evidence}
+              className={`ambiance-item ambiance-item--${scene.size} reveal-on-scroll`}
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <Image
+                src={scene.src}
+                alt={scene.alt}
+                fill
+                sizes={isLarge ? AMBIANCE_SIZES_LARGE : AMBIANCE_SIZES}
+                className="ambiance-item__img"
+                /* la 1ʳᵉ image (featured) est dans le viewport au scroll vers la galerie :
+                 * priority=false suffit, l'IntersectionObserver de page.tsx gère le reveal */
+                priority={false}
+              />
+              <div className="ambiance-item__shade" aria-hidden="true" />
+              <figcaption className="ambiance-item__caption">
+                <span className="ambiance-item__evidence">{scene.evidence}</span>
+                <span className="ambiance-item__title">{scene.title}</span>
+                <span className="ambiance-item__tag">{scene.tag}</span>
+              </figcaption>
+            </figure>
+          );
+        })}
       </div>
     </section>
   );

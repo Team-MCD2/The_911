@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
-const GRADIENT_OVERLAY =
-  'linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.55) 100%)';
+import Image from 'next/image';
 
 type MenuItem = {
   id: number;
@@ -13,11 +11,28 @@ type MenuItem = {
   priceSeul: string;
   priceMenu: string;
   img: string;
+  /** Tags d'identification rapide pour le client (halal, spicy, végé, kids, dessert). */
+  tags?: ReadonlyArray<'halal' | 'spicy' | 'veggie' | 'kids' | 'dessert'>;
+};
+
+/* Largeur typique d'une carte menu : ~280-340 px sur mobile, 1/2 ou 1/3 sur desktop. */
+const MENU_CARD_SIZES =
+  '(max-width: 600px) 90vw, (max-width: 900px) 45vw, 320px';
+
+const TAG_LABELS: Record<NonNullable<MenuItem['tags']>[number], { label: string; emoji: string }> = {
+  halal: { label: 'Halal', emoji: '☪' },
+  spicy: { label: 'Épicé', emoji: '🌶' },
+  veggie: { label: 'Végé', emoji: '🥬' },
+  kids: { label: 'Enfant', emoji: '🧒' },
+  dessert: { label: 'Dessert', emoji: '🍰' },
 };
 
 // Données issues de la carte officielle THE 911 (recto + verso fournis par le restaurant).
 // Premier prix = produit seul, second prix = formule menu (avec boisson).
 // Toute correction des prix doit se faire en regardant la carte officielle uniquement.
+//
+// Tous les produits viande sont halal (étoile Conformité confirmée par le restaurant).
+// `spicy` ajouté sur les recettes piquantes (sauce spicy, etc.).
 const menuData: MenuItem[] = [
   // ============== BURGERS ==============
   {
@@ -28,6 +43,7 @@ const menuData: MenuItem[] = [
     priceSeul: '6,00€',
     priceMenu: '8,50€',
     img: '/images/menu/smash-1.jpeg',
+    tags: ['halal'],
   },
   {
     id: 2,
@@ -37,6 +53,7 @@ const menuData: MenuItem[] = [
     priceSeul: '7,00€',
     priceMenu: '9,50€',
     img: '/images/menu/smash-2.jpeg',
+    tags: ['halal'],
   },
   {
     id: 3,
@@ -46,6 +63,7 @@ const menuData: MenuItem[] = [
     priceSeul: '6,50€',
     priceMenu: '9,00€',
     img: '/images/menu/little-beef.jpeg',
+    tags: ['halal'],
   },
   {
     id: 4,
@@ -55,6 +73,7 @@ const menuData: MenuItem[] = [
     priceSeul: '7,00€',
     priceMenu: '9,50€',
     img: '/images/menu/chicken.jpeg',
+    tags: ['halal'],
   },
 
   // ============== SANDWICHS ==============
@@ -66,6 +85,7 @@ const menuData: MenuItem[] = [
     priceSeul: '7,50€',
     priceMenu: '10,00€',
     img: '/images/menu/philly.jpeg',
+    tags: ['halal'],
   },
   {
     id: 6,
@@ -75,6 +95,7 @@ const menuData: MenuItem[] = [
     priceSeul: '9,50€',
     priceMenu: '12,00€',
     img: '/images/menu/harlem.jpeg',
+    tags: ['halal'],
   },
   {
     id: 7,
@@ -84,6 +105,7 @@ const menuData: MenuItem[] = [
     priceSeul: '11,00€',
     priceMenu: '13,50€',
     img: '/images/menu/pulled-beef.jpeg',
+    tags: ['halal'],
   },
   {
     id: 8,
@@ -93,6 +115,7 @@ const menuData: MenuItem[] = [
     priceSeul: '9,50€',
     priceMenu: '12,00€',
     img: '/images/menu/213.jpeg',
+    tags: ['halal'],
   },
   {
     id: 9,
@@ -102,6 +125,7 @@ const menuData: MenuItem[] = [
     priceSeul: '9,50€',
     priceMenu: '12,00€',
     img: '/images/menu/brooklyn.jpeg',
+    tags: ['halal'],
   },
   {
     id: 10,
@@ -111,6 +135,7 @@ const menuData: MenuItem[] = [
     priceSeul: '11,00€',
     priceMenu: '13,50€',
     img: '/images/menu/mountain.jpeg',
+    tags: ['halal'],
   },
   {
     id: 11,
@@ -120,6 +145,7 @@ const menuData: MenuItem[] = [
     priceSeul: '7,00€',
     priceMenu: '9,50€',
     img: '/images/menu/bbf.jpeg',
+    tags: ['halal'],
   },
   {
     id: 12,
@@ -129,6 +155,7 @@ const menuData: MenuItem[] = [
     priceSeul: '11,00€',
     priceMenu: '13,50€',
     img: '/images/menu/boston.jpeg',
+    tags: ['halal'],
   },
   {
     id: 13,
@@ -138,6 +165,7 @@ const menuData: MenuItem[] = [
     priceSeul: '9,50€',
     priceMenu: '12,00€',
     img: '/images/menu/chicanos.jpeg',
+    tags: ['halal', 'spicy'],
   },
   {
     id: 14,
@@ -147,6 +175,7 @@ const menuData: MenuItem[] = [
     priceSeul: '9,50€',
     priceMenu: '12,00€',
     img: '/images/menu/forest.jpeg',
+    tags: ['halal'],
   },
 
   // ============== LES CROQ'S ==============
@@ -158,6 +187,7 @@ const menuData: MenuItem[] = [
     priceSeul: '3,50€',
     priceMenu: '6,00€',
     img: '/images/menu/croq.jpeg',
+    tags: ['halal'],
   },
   {
     id: 16,
@@ -167,6 +197,7 @@ const menuData: MenuItem[] = [
     priceSeul: '7,00€',
     priceMenu: '9,50€',
     img: '/images/menu/croq-n-beef.jpeg',
+    tags: ['halal'],
   },
   {
     id: 17,
@@ -176,6 +207,7 @@ const menuData: MenuItem[] = [
     priceSeul: '4,00€',
     priceMenu: '6,50€',
     img: '/images/menu/croq-n-goat.jpeg',
+    tags: ['halal'],
   },
 
   // ============== MENU ENFANT & DESSERTS ==============
@@ -187,6 +219,7 @@ const menuData: MenuItem[] = [
     priceSeul: '6,00€',
     priceMenu: '6,00€',
     img: '/images/menu/menu-enfant.jpeg',
+    tags: ['halal', 'kids'],
   },
   {
     id: 19,
@@ -196,6 +229,7 @@ const menuData: MenuItem[] = [
     priceSeul: '3,50€',
     priceMenu: '3,50€',
     img: '/images/menu/tiramisu.jpeg',
+    tags: ['veggie', 'dessert'],
   },
   {
     id: 20,
@@ -205,6 +239,7 @@ const menuData: MenuItem[] = [
     priceSeul: '4,50€',
     priceMenu: '4,50€',
     img: '/images/menu/milkshake.jpeg',
+    tags: ['veggie', 'dessert'],
   },
 ];
 
@@ -297,16 +332,27 @@ export default function MenuSection() {
           <div className="menu-grid" ref={gridRef}>
             {filteredMenu.map((item) => (
               <article key={`${filter}-${item.id}`} className="menu-card reveal-on-scroll">
-                <div
-                  className="card-img"
-                  style={{
-                    backgroundImage: `${GRADIENT_OVERLAY}, url('${item.img}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                  role="img"
-                  aria-label={`${item.name} — ${item.desc}`}
-                >
+                <div className="card-img">
+                  <Image
+                    src={item.img}
+                    alt={`${item.name} — ${item.desc}`}
+                    fill
+                    sizes={MENU_CARD_SIZES}
+                    className="card-img__media"
+                    /* L'overlay sombre est désormais une couche CSS séparée (.card-img__overlay)
+                     * pour que next/image puisse pré-générer un blur placeholder propre. */
+                  />
+                  <span className="card-img__overlay" aria-hidden="true" />
+                  {item.tags && item.tags.length > 0 && (
+                    <ul className="card-tags" aria-label="Caractéristiques">
+                      {item.tags.map((tag) => (
+                        <li key={tag} className={`card-tag card-tag--${tag}`}>
+                          <span aria-hidden="true">{TAG_LABELS[tag].emoji}</span>
+                          {TAG_LABELS[tag].label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   <div className="confidential-stamp">EVIDENCE #{item.id}</div>
                 </div>
                 <div className="card-content">
