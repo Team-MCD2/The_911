@@ -4979,6 +4979,177 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
 }
 
 /* ================================================================
+   RESPONSIVE FINETUNING (2026-05) - couverture des breakpoints
+   intermediaires (tablette) + petits ecrans (iPhone SE / Galaxy S)
+   pour tous les nouveaux composants cinematiques.
+   ================================================================ */
+
+/* === Tablette portrait + grand mobile (601px - 1024px) ===
+ * Entre 600px et la fin des breakpoints existants : on evite que
+ * les grilles auto-fit ne crachent des cartes trop larges et on
+ * adapte la typo qui devient surdimensionnee a ces tailles. */
+@media (min-width: 601px) and (max-width: 1024px) {
+  /* Hero : la version desktop (HUD + scroll-hint) reste, on reduit
+     juste les marges et la typo monospace pour rester lisible */
+  .hero-hud { font-size: 0.68rem; padding: 0.6rem 0.85rem; }
+  .hero-hud__time, .hero-hud__coord { font-size: 0.74rem; }
+
+  /* Le Gang : 2 colonnes stables sur tablette portrait + paysage */
+  .gang-grid { grid-template-columns: repeat(2, 1fr); }
+  .gang-card__codename { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+
+  /* Wanted posters : 2 colonnes (au lieu de 4 desktop ou 1 mobile) */
+  .wanted-grid { grid-template-columns: repeat(2, 1fr); }
+  .wanted-poster__banner { font-size: 1.7rem; }
+  .wanted-poster__name { font-size: 1.6rem; }
+
+  /* Evidence packages : on garde 2 colonnes, padding ajuste */
+  .evidence-package { padding: 1.2rem 1.2rem 1.4rem; }
+  .evidence-package__seal {
+    margin-left: -1.2rem;
+    margin-right: -1.2rem;
+  }
+
+  /* Section stamp : police monospace plus petite, gap reduit */
+  .section-stamp { padding: 2.2rem 1.5rem; gap: 1.1rem; }
+}
+
+/* === Petite tablette / mobile L (max 768px) === */
+@media (max-width: 768px) {
+  /* Le Gang : passe en 1 colonne plein largeur des 768px car
+     les cartes deviennent vite trop etroites a 2 colonnes */
+  .gang-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  /* Most Wanted : 1 colonne aussi, plus de respiration verticale */
+  .wanted-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .wanted-poster:nth-child(even),
+  .wanted-poster.is-featured { transform: rotate(-0.5deg); }
+
+  /* Evidence packages : 1 colonne en dessous de 768px */
+  .evidence-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+}
+
+/* === Small mobile (max 480px - iPhone SE, Galaxy S, Pixel) === */
+@media (max-width: 480px) {
+  /* Hero : on reduit drastiquement le logo 911 pour eviter qu'il
+     ne deborde et qu'il reste lisible avec les chiffres en cascade */
+  .nine-text { font-size: clamp(4.5rem, 22vw, 6rem); line-height: 0.85; }
+  .the-text  { font-size: clamp(2rem, 8vw, 2.8rem); }
+  .hero-tagline { font-size: 0.7rem; letter-spacing: 0.2em; }
+  .express-badge { font-size: 0.65rem; padding: 0.25rem 0.6rem; top: -6px; }
+
+  /* HUD : on les rapproche du bord, taille reduite */
+  .hero-hud { font-size: 0.55rem; padding: 0.4rem 0.55rem; gap: 0.2rem; }
+  .hero-hud__time, .hero-hud__coord { font-size: 0.62rem; }
+  .hero-hud--topleft  { top: 70px; left: 0.5rem; }
+  .hero-hud--topright { top: 70px; right: 0.5rem; }
+  /* Le HUD coord cache la 2eme coord pour eviter overflow */
+  .hero-hud--topright .hero-hud__zone { display: none; }
+
+  /* Scroll hint : plus discret */
+  .hero-scroll-hint { bottom: 0.5rem; }
+  .hero-scroll-hint__text { font-size: 0.6rem; }
+
+  /* Le Gang : codename plus petit, fiche plus compacte */
+  .gang-card__codename { font-size: 1.7rem; }
+  .gang-card__file { padding: 1rem 0.9rem 1.2rem; font-size: 0.8rem; }
+  .gang-card__rank { font-size: 0.55rem; padding: 0.25rem 0.5rem; }
+  .gang-card__rank strong { font-size: 0.85rem; }
+
+  /* Most Wanted : tampons et chiffres reduits */
+  .wanted-poster { padding: 0.85rem 0.75rem 1rem; }
+  .wanted-poster__banner { font-size: 1.4rem; padding: 0.2rem 0; margin-bottom: 0.6rem; }
+  .wanted-poster__name { font-size: 1.4rem; }
+  .wanted-poster__desc { font-size: 0.72rem; }
+  .wanted-poster__reward-amount { font-size: 1.6rem; }
+  .wanted-header { padding: 1rem 1rem; margin-bottom: 2rem; }
+  .wanted-header__line { font-size: 0.7rem; letter-spacing: 0.25em; }
+  .wanted-header__main { font-size: 2.4rem; }
+  .wanted-header__stars { font-size: 0.9rem; }
+
+  /* Evidence packages : on cache le barcode (overflow potentiel) et
+     on reduit le tampon EVIDENCE pour qu'il reste dans la carte */
+  .evidence-package__case { font-size: 0.7rem; }
+  .evidence-package__barcode { font-size: 0.85rem; letter-spacing: 0.02em; }
+  .evidence-package__stamp {
+    font-size: 1rem;
+    padding: 0.1rem 1.5rem;
+    right: -1.5rem;
+    top: 1rem;
+    border-width: 3px;
+  }
+  .evidence-package__seal span { font-size: 0.6rem; }
+  .evidence-package__cta { font-size: 0.78rem; padding: 0.8rem 1rem; letter-spacing: 0.08em; }
+  .evidence-package__chain-label { display: none; }
+  /* Sur tres petit ecran, le label "CHAIN OF CUSTODY" disparait :
+     on garde juste l'empreinte digitale + ligne pointillee */
+
+  /* Section stamps : layout vertical pour eviter overflow */
+  .section-stamp { padding: 1.5rem 1rem; gap: 0.6rem; flex-wrap: wrap; }
+  .section-stamp__line { min-width: 30px; }
+  .section-stamp__badge { padding: 0.4rem 0.7rem; gap: 0.4rem; }
+  .section-stamp__badge-label { font-size: 0.6rem; letter-spacing: 0.18em; }
+  .section-stamp__badge-evidence { font-size: 0.62rem; padding-left: 0.4rem; }
+
+  /* Dispatcher : encore plus compact, prend moins d'espace en haut */
+  .dispatcher {
+    width: min(220px, calc(100vw - 1rem));
+    font-size: 0.7rem;
+  }
+  .dispatcher__title { font-size: 0.6rem; }
+  .dispatcher__code { font-size: 0.6rem; padding: 0.1rem 0.3rem; }
+  .dispatcher__body { padding: 0.5rem 0.6rem; font-size: 0.7rem; }
+  .dispatcher__footer { padding: 0.3rem 0.6rem; font-size: 0.55rem; }
+
+  /* Caution tape (existante) : taille reduite */
+  .caution-tape span { font-size: 0.85rem; }
+}
+
+/* === Tres petit mobile (max 360px - iPhone 5/SE 1st gen) === */
+@media (max-width: 360px) {
+  .hero-hud { display: none; } /* on cache les HUD : trop encombrant */
+  .nine-text { font-size: 4rem; }
+  .the-text  { font-size: 1.7rem; }
+  .gang-card__codename { font-size: 1.4rem; }
+  .wanted-poster__name { font-size: 1.2rem; }
+  .evidence-package__stamp { display: none; } /* le tampon ne tient plus */
+}
+
+/* === Tres haut format (1440px+) === */
+@media (min-width: 1440px) {
+  /* On evite que les grilles s'etirent trop : on plafonne les sections
+     a un max-width genereux pour garder une lecture confortable */
+  .gang-section,
+  .wanted-section { max-width: 1320px; }
+  .delivery-section--evidence { max-width: 1180px; }
+}
+
+/* === Landscape mobile (paysage <= 500px de hauteur) ===
+ * En paysage sur smartphone, la hero plein ecran prend toute la place
+ * et le contenu est a peine visible. On reduit la hauteur du hero. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 100vh; }
+  .hero-content { padding-top: 60px; padding-bottom: 60px; }
+  .nine-text { font-size: 4rem; }
+  .the-text { font-size: 1.6rem; }
+  .hero-scroll-hint { display: none; }
+  .hero-hud--topleft, .hero-hud--topright { top: 60px; }
+}
+
+/* === Safe areas iOS (notch + home indicator) ===
+ * Sur les iPhone modernes, le hero peut passer sous le notch et le
+ * floating-call sous le home indicator. On utilise env() avec fallback. */
+@supports (padding: max(0px)) {
+  .hero { padding-bottom: env(safe-area-inset-bottom); }
+  .floating-call {
+    bottom: max(1.2rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+  }
+  .cookie-banner {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ================================================================
    REDUCED MOTION : respect du setting systeme
    ================================================================ */
 @media (prefers-reduced-motion: reduce) {
