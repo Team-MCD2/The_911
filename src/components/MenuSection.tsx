@@ -253,7 +253,7 @@ const FILTERS: { id: 'tout' | MenuItem['category']; label: string }[] = [
 
 export default function MenuSection() {
   const [filter, setFilter] = useState<'tout' | MenuItem['category']>('tout');
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 

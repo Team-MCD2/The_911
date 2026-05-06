@@ -20,6 +20,15 @@ const LOCATIONS = [
     mapsUrl:
       'https://www.google.com/maps/search/?api=1&query=The+911+10+Rue+des+Ecoles+31830+Plaisance-du-Touch',
   },
+  {
+    id: 'toulouse',
+    label: 'THE 911 · TOULOUSE CENTRE',
+    street: '9 Rue Mespoul',
+    city: '31400 Toulouse',
+    rating: '4.5',
+    mapsUrl:
+      'https://www.google.com/maps/search/?api=1&query=The+911+9+Rue+Mespoul+31400+Toulouse',
+  },
 ];
 
 const NAVIGATION = [

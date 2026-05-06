@@ -271,16 +271,7 @@ export default function LeGangSection() {
         ))}
       </div>
 
-      {/* Bandeau bas : call to action */}
-      <div className="gang-footer">
-        <p className="gang-footer__text">
-          <span className="gang-footer__icon" aria-hidden="true">⚠</span>
-          Tous les suspects sont <strong>armés et affamants</strong>. Approchez avec précaution.
-        </p>
-        <a href="#menu" className="gang-footer__cta">
-          Consulter le dossier complet →
-        </a>
-      </div>
+
     </section>
   );
 }

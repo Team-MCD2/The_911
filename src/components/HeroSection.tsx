@@ -14,28 +14,10 @@ import { useEffect, useRef, useState } from 'react';
  * Initial state = '--:--:--' pour eviter tout hydration mismatch :
  * le serveur rend '--:--:--', le client aussi, puis l'interval prend la main.
  */
-function useTimecode(): string {
-  const [timecode, setTimecode] = useState('--:--:--');
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      const ms = String(Math.floor(now.getMilliseconds() / 100));
-      setTimecode(`${h}:${m}:${s}.${ms}`);
-    };
-    const id = window.setInterval(update, 100);
-    return () => window.clearInterval(id);
-  }, []);
-
-  return timecode;
-}
 
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const timecode = useTimecode();
+
 
   // Force la lecture immédiate sur mobile : Safari iOS / Chrome Android peuvent
   // ignorer `autoplay` tant qu'on ne garantit pas muted + playsInline via JS,
@@ -127,22 +109,6 @@ export default function HeroSection() {
       {/* Noise grain : texture film 35mm, rend le tout cinematique */}
       <div className="hero-noise" aria-hidden="true"></div>
 
-      {/* HUD camera surveillance - coin superieur gauche */}
-      <div className="hero-hud hero-hud--topleft" aria-hidden="true">
-        <span className="hero-hud__rec">
-          <span className="hero-hud__dot"></span>
-          REC
-        </span>
-        <span className="hero-hud__cam">CAM 911</span>
-        <span className="hero-hud__time">{timecode}</span>
-      </div>
-
-      {/* HUD coordonnees - coin superieur droit */}
-      <div className="hero-hud hero-hud--topright" aria-hidden="true">
-        <span className="hero-hud__coord">43°34&apos;13.8&quot;N</span>
-        <span className="hero-hud__coord">1°17&apos;50.6&quot;E</span>
-        <span className="hero-hud__zone">ZONE · PLAISANCE-DU-TOUCH</span>
-      </div>
 
       <div className="caution-tape-container" id="parallax-tapes">
         <div className="caution-tape tape-1">
@@ -166,11 +132,7 @@ export default function HeroSection() {
               <span className="hero-911__digit" style={{ animationDelay: '0.55s' }}>1</span>
             </span>
           </h1>
-          <p className="hero-tagline">
-            <span className="hero-tagline__bracket">[</span>
-            GUILTY · SANDWICH · EST. 2023
-            <span className="hero-tagline__bracket">]</span>
-          </p>
+
         </div>
         <div className="hero-buttons">
           <Link href="#delivery" className="btn btn-warning btn-glow">COMMANDER MAINTENANT</Link>

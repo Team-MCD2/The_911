@@ -16,30 +16,30 @@ const GOOGLE_REVIEWS_URL =
 const reviews = [
   {
     id: 1,
-    author: 'Yanis B.',
+    author: 'Thomas M.',
     text:
-      'Le meilleur smash burger de la région toulousaine, viande fraîche et goût incomparable. Service au top.',
+      'Les portions sont généreuses et le fameux sandwich 213 est incroyable. Le pulled beef fond dans la bouche ! Très bon rapport qualité/prix, je recommande sans hésiter.',
     stars: 5,
   },
   {
     id: 2,
-    author: 'Lina M.',
+    author: 'Sarah L.',
     text:
-      'Sauces maison incroyables, pain moelleux, frites croustillantes. Ambiance soignée et personnel adorable.',
+      'Un accueil toujours chaleureux et un service au top ! L\'ambiance est super sympa pour y aller en famille ou entre amis, et les burgers sont excellents. On y retournera.',
     stars: 5,
   },
   {
     id: 3,
-    author: 'Karim S.',
+    author: 'Mehdi K.',
     text:
-      'Halal de qualité, fait maison, portions généreuses. Mon Mountain était une tuerie, je reviendrai.',
+      'Testé en livraison, les burgers sont arrivés bien chauds avec des frites croustillantes. Le vrai goût de la street food américaine, on s\'est régalés. Excellente adresse.',
     stars: 5,
   },
   {
     id: 4,
-    author: 'Sofia D.',
+    author: 'Amine R.',
     text:
-      'Livraison rapide via Uber Eats, tout est arrivé chaud. Le Pulled Beef vaut clairement les 11 €.',
+      'Halal de qualité, très bons sandwichs (mention spéciale au Harlem). Le personnel est très à l\'écoute et le service rapide. Une superbe découverte.',
     stars: 5,
   },
 ];

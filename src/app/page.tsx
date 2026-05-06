@@ -12,7 +12,7 @@ import ReviewsSection from '@/components/ReviewsSection';
 import AmbianceSection from '@/components/AmbianceSection';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
-import DispatcherWidget from '@/components/DispatcherWidget';
+
 
 /* Stamp dynamique entre sections : classifie / evidence / dossier.
  * Garde des props simples pour rester flexible sans prop-drilling. */
@@ -91,7 +91,7 @@ export default function Home() {
 
       <Footer />
       <CookieBanner />
-      <DispatcherWidget />
+
     </main>
   );
 }

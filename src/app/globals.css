@@ -2026,6 +2026,7 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
     gap: 2rem;
     padding: 1rem 0 2rem;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 .review-card {
@@ -2037,6 +2038,20 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
     padding: 2rem;
     border-radius: 8px;
     position: relative;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .reviews-slider {
+        flex-direction: column;
+        overflow-x: visible;
+        scroll-snap-type: none;
+        gap: 1.5rem;
+    }
+    .review-card {
+        min-width: 100%;
+        max-width: 100%;
+    }
 }
 
 .review-card::before {
