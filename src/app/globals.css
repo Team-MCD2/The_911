@@ -107,6 +107,9 @@ h1, h2, h3, h4, .logo-text, .caution-tape span, .confidential-stamp {
   display: flex;
   gap: 2.5rem;
   list-style: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .nav-links a {
